@@ -1,31 +1,27 @@
-import { z } from "zod";
-import { createMcpHandler } from "mcp-handler";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// IMPORTANT: This tells Vercel the runtime for this /api function.
-export const config = {
-  runtime: "nodejs",
-};
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== "POST") {
+    return res.status(200).json({
+      name: "Next Step Buddy",
+      status: "alive",
+      message: "Send a POST request with { goal, blocker }"
+    });
+  }
 
-const handler = createMcpHandler((server) => {
-  server.tool(
-    "next_step",
-    "Gives one small next step so you can move forward",
-    {
-      goal: z.string().describe("What you want to achieve"),
-      blocker: z.string().optional().describe("What feels in the way"),
-    },
-    async ({ goal, blocker }) => {
-      const blockerText = blocker ? ` (even if "${blocker}" is still there)` : "";
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Do this next: take one small action that moves "${goal}" forward${blockerText}.`,
-          },
-        ],
-      };
-    }
-  );
-});
+  const { goal, blocker } = req.body || {};
 
-export default handler;
+  if (!goal) {
+    return res.status(400).json({
+      error: "Missing 'goal'"
+    });
+  }
+
+  const blockerText = blocker
+    ? ` (even if "${blocker}" is still there)`
+    : "";
+
+  return res.status(200).json({
+    result: `Do this next: take one small action that moves "${goal}" forward${blockerText}.`
+  });
+}
