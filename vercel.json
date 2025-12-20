@@ -3,6 +3,7 @@
     "mcp.ts": {
       "runtime": "nodejs20.x"
     }
-  }
+  },
+  "buildCommand": "npm install",
+  "outputDirectory": "."
 }
-
