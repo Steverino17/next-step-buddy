@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { createMcpHandler } from "mcp-handler";
 
+// IMPORTANT: This tells Vercel the runtime for this /api function.
+export const config = {
+  runtime: "nodejs",
+};
+
 const handler = createMcpHandler((server) => {
   server.tool(
     "next_step",
