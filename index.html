@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Next Step Buddy</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+      label { display:block; margin: 14px 0 6px; font-weight: 600; }
+      input, textarea { width: 100%; padding: 10px; font-size: 16px; }
+      button { margin-top: 14px; padding: 10px 14px; font-size: 16px; cursor: pointer; }
+      .out { margin-top: 18px; padding: 12px; background: #f6f6f6; border: 1px solid #ddd; white-space: pre-wrap; }
+      .muted { color:#666; font-size: 14px; margin-top: 6px; }
+    </style>
+  </head>
+  <body>
+    <h1>Next Step Buddy</h1>
+    <p class="muted">Enter a goal. Optionally add what’s in the way. You’ll get one clear next step.</p>
+
+    <label for="goal">Goal</label>
+    <input id="goal" placeholder="Example: finish my ChatGPT app" />
+
+    <label for="blocker">Blocker (optional)</label>
+    <textarea id="blocker" rows="3" placeholder="Example: I keep getting stuck on technical steps"></textarea>
+
+    <button id="btn">Get my next step</button>
+
+    <div class="out" id="out">Waiting…</div>
+
+    <script>
+      const btn = document.getElementById("btn");
+      const out = document.getElementById("out");
+
+      btn.addEventListener("click", async () => {
+        const goal = document.getElementById("goal").value.trim();
+        const blocker = document.getElementById("blocker").value.trim();
+
+        if (!goal) {
+          out.textContent = "Please enter a goal.";
+          return;
+        }
+
+        out.textContent = "Thinking…";
+
+        try {
+          const res = await fetch("/api/server", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ goal, blocker })
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            out.textContent = "Error: " + (data.error || res.statusText);
+            return;
+          }
+
+          out.textContent = data.result || JSON.stringify(data, null, 2);
+        } catch (e) {
+          out.textContent = "Request failed: " + e.message;
+        }
+      });
+    </script>
+  </body>
+</html>
