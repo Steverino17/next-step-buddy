@@ -1,0 +1,8 @@
+{
+  "name": "next-step-buddy",
+  "version": "1.0.0",
+  "description": "Get one clear next step toward any goal.",
+  "mcp": {
+    "endpoint": "/api/mcp"
+  }
+}
