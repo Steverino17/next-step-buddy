@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // Health / quick check in browser
+  // Health check / browser visit
   if (req.method !== "POST") {
     return res.status(200).json({
       name: "Next Step Buddy",
@@ -21,9 +21,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   const blockerText = blocker ? ` (even if "${blocker}" is still there)` : "";
 
-  // Option A: ALWAYS return ONE next step (no questions)
-  // Keep it simple and consistent.
-  const result = `Do this next: take one small action that moves "${goal}" forward${blockerText}.`;
+  const result = `Next step: take one small action that moves "${goal}" forward${blockerText}.`;
 
   return res.status(200).json({ result });
 }
